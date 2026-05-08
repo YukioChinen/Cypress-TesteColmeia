@@ -39,12 +39,6 @@ Este é um portfólio profissional pronto para vaga de **Analista de Testes** na
 
 **Total**: 65 testes automatizados
 
-### CI/CD
-
-| Arquivo | Propósito | Status |
-|---------|-----------|--------|
-| [.github/workflows/cypress.yml](./.github/workflows/cypress.yml) | GitHub Actions workflow | ✅ Novo |
-
 ---
 
 ## 🎯 Scripts NPM Disponíveis
@@ -100,13 +94,6 @@ npm run test:edge             # Rodar com Edge
 - SETUP.md com troubleshooting
 - CONTRIBUTING.md com padrões de código
 - SELECTORS.md com melhores práticas
-
-### 6. ✅ GitHub Actions CI/CD
-- Execução automática em push e pull requests
-- Testes em múltiplos navegadores (Chrome, Firefox, Edge)
-- Testes em múltiplas versões Node (18.x, 20.x)
-- Upload automático de screenshots e vídeos
-- Relatório de status
 
 ### 7. ✅ Seletores Robustos
 - Melhorados para evitar fragilidade
@@ -206,12 +193,6 @@ npm run test:forms
 - ✅ Comentários explicativos
 - ✅ Nomes descritivos
 
-### DevOps
-- ✅ CI/CD com GitHub Actions
-- ✅ Testes em múltiplos navegadores
-- ✅ Testes em múltiplas versões Node
-- ✅ Artefatos de falha (screenshots/vídeos)
-
 ### Documentação
 - ✅ README profissional
 - ✅ Guia de setup completo
@@ -226,7 +207,6 @@ npm run test:forms
 - ✅ Sem dependências quebradas
 - ✅ Documentação completa
 - ✅ Scripts npm funcionam
-- ✅ GitHub Actions configurado
 - ✅ Exemplos práticos inclusos
 - ✅ Bugs documentados corretamente
 - ✅ Código limpo e profissional
@@ -241,9 +221,8 @@ Se quiser expandir ainda mais:
 2. **Testes de Acessibilidade**: axe-core
 3. **Relatórios Visuais**: Mochawesome reports
 4. **Testes em Paralelo**: cypress-split
-5. **Docker**: Dockerfile para CI/CD
-6. **Dashboard**: Perfecto Mobile Cloud
-7. **Integração Jira**: Auto-reporting de bugs
+5. **Dashboard**: Perfecto Mobile Cloud
+6. **Integração Jira**: Auto-reporting de bugs
 
 ---
 
@@ -254,7 +233,7 @@ Se quiser expandir ainda mais:
 ✅ **Bem Documentado**: Fácil de entender e usar  
 ✅ **Prático**: Testes reais e funcionais  
 ✅ **Escalável**: Fácil de expandir  
-✅ **Moderno**: USA CI/CD, variáveis de ambiente, etc  
+✅ **Moderno**: Usa variáveis de ambiente, seletores robustos, padrões recomendados  
 ✅ **Mostra Conhecimento**: Demonstra profundidade em QA  
 
 ---
