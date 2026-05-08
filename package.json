@@ -1,6 +1,29 @@
 {
+  "name": "colmeia-qa-tests",
+  "version": "1.0.0",
+  "description": "Suite de testes automatizados E2E Cypress para aplicação Colmeia - Desafio Analista de Testes",
+  "author": "Seu Nome",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/seu-usuario/colmeia-qa-tests"
+  },
+  "scripts": {
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
+    "cypress:run:headed": "cypress run --headed",
+    "test": "cypress run",
+    "test:login": "cypress run --spec 'cypress/e2e/login.cy.js'",
+    "test:dashboard": "cypress run --spec 'cypress/e2e/dashboard.cy.js'",
+    "test:bancos": "cypress run --spec 'cypress/e2e/bancoDeDados.cy.js'",
+    "test:forms": "cypress run --spec 'cypress/e2e/colmeiaForms.cy.js'",
+    "test:chrome": "cypress run --browser chrome",
+    "test:firefox": "cypress run --browser firefox",
+    "test:edge": "cypress run --browser edge"
+  },
   "devDependencies": {
     "cypress": "^15.14.2",
-    "cypress-plugin-tab": "^2.0.0"
+    "cypress-plugin-tab": "^2.0.0",
+    "dotenv": "^16.6.1"
   }
 }

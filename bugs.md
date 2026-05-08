@@ -1,5 +1,12 @@
 # Bugs e comportamentos observados
 
+## Ambiente testado
+
+- Ambiente QA
+- Navegador: Google Chrome
+- Tipo de teste: Manual + Automação E2E
+- Ferramenta de automação: Cypress
+
 ---
 
 ## Bug 1 — Mensagem de erro exibida mesmo com autenticação bem-sucedida
@@ -117,7 +124,7 @@ O usuário não possui acesso visível a ações relacionadas à conta ou sessã
 ## Bug 4 — Dashboard pode ser acessado sem autenticação
 
 ### Severidade
-Alta
+Crítica
 
 ### Descrição
 A rota do dashboard pode ser acessada diretamente sem necessidade de autenticação.
@@ -139,6 +146,8 @@ O sistema permite acesso direto ao dashboard sem autenticação.
 ### Impacto
 Falha de controle de acesso, permitindo que usuários não autenticados visualizem áreas internas da aplicação.
 
+---
+
 ## Observação 3 — Sidebar permanece expandida após segundo clique
 
 ### Descrição
@@ -151,7 +160,9 @@ Após expandir o menu lateral, um novo clique no botão da sidebar não recolhe 
 ### Impacto
 Possível inconsistência de usabilidade caso a intenção da interface seja permitir expansão e recolhimento do menu lateral.
 
-## Bug 6 — Rotas inválidas retornam erro cru de infraestrutura
+---
+
+## Bug 5 — Rotas inválidas retornam erro cru de infraestrutura
 
 ### Severidade
 Média
@@ -159,7 +170,7 @@ Média
 ### Descrição
 Ao acessar uma rota inexistente, a aplicação não apresenta uma página de erro amigável ou redirecionamento adequado.
 
-Em vez disso, o sistema retorna uma mensagem XML de infraestrutura:
+Em vez disso, o sistema retorna uma mensagem XML de infraestrutura, indicando ausência de tratamento frontend para rotas inválidas:
 
 ```xml
 <Error>
@@ -167,7 +178,6 @@ Em vez disso, o sistema retorna uma mensagem XML de infraestrutura:
   <Message>The specified key does not exist.</Message>
 </Error>
 ```
-
 ### Passos para reproduzir
 1. Acessar uma rota inexistente, por exemplo:
    `/rota-invalida`
@@ -184,3 +194,156 @@ A aplicação retorna mensagem XML de erro de infraestrutura.
 ### Impacto
 Má experiência do usuário e exposição de detalhes técnicos da infraestrutura da aplicação.
 
+---
+
+## Observação 4 — Ausência de identificadores dedicados para automação de testes
+
+### Descrição
+Os elementos interativos da interface (botões, inputs e links) não possuem identificadores dedicados para automação, como atributos:
+
+- `data-cy`
+- `data-testid`
+- `id`
+
+Em diversos casos, os testes automatizados precisam utilizar seletores frágeis baseados em:
+- posição de elementos
+- hierarquia DOM
+- classes utilitárias
+- texto exibido
+
+### Comportamento observado
+Exemplos encontrados:
+- múltiplos botões sem identificadores únicos
+- múltiplos inputs na mesma tela
+- ações acessíveis apenas via estrutura DOM
+- necessidade de utilização de seletores como:
+  - `button:first`
+  - `.parent().find()`
+  - `input[placeholder="..."]`
+
+### Resultado esperado
+Os componentes interativos deveriam possuir identificadores estáveis para automação, por exemplo:
+
+```html
+<button data-cy="refresh-button">
+<input data-cy="search-input">
+```
+
+### Impacto
+- Maior fragilidade dos testes automatizados
+- Maior custo de manutenção da suíte de testes
+- Possibilidade de falsos positivos/negativos após alterações visuais
+- Dificuldade para escalabilidade da automação E2E
+
+---
+
+## Bug 6 — Dados criados não persistem após atualização da página
+
+### Severidade
+Alta
+
+### Descrição
+Os itens criados na tela "Bancos de dados" não permanecem disponíveis após atualizar a página.
+
+O comportamento indica possível ausência de persistência dos dados no backend ou falha no recarregamento da listagem após refresh.
+
+### Passos para reproduzir
+1. Acessar:
+   `/dashboard/campanha/bancos-de-dados`
+2. Clicar em "Criar"
+3. Inserir um nome válido para o banco de dados
+4. Clicar em "Salvar"
+5. Confirmar que o item aparece na tabela
+6. Atualizar a página (`F5` ou reload do navegador)
+
+### Resultado esperado
+O item criado deveria permanecer listado após atualização da página.
+
+### Resultado obtido
+O item desaparece após o refresh da aplicação.
+
+### Impacto
+- Possível perda de dados criados pelo usuário
+- Indício de ausência de persistência backend
+- Inconsistência entre estado da interface e armazenamento da aplicação
+- Comprometimento da confiabilidade do sistema
+
+---
+
+## Bug 7 — Dados criados não persistem após atualização da página
+
+### Severidade
+Alta
+
+### Descrição
+Os itens criados na tela "Bancos de dados" não permanecem disponíveis após atualizar a página.
+
+O comportamento indica possível ausência de persistência dos dados no backend ou falha no recarregamento da listagem após refresh.
+
+### Passos para reproduzir
+1. Acessar:
+   `/dashboard/campanha/bancos-de-dados`
+2. Clicar em "Criar"
+3. Inserir um nome válido para o banco de dados
+4. Clicar em "Salvar"
+5. Confirmar que o item aparece na tabela
+6. Atualizar a página (`F5` ou reload do navegador)
+
+### Resultado esperado
+O item criado deveria permanecer listado após atualização da página.
+
+### Resultado obtido
+O item desaparece após o refresh da aplicação.
+
+### Impacto
+- Possível perda de dados criados pelo usuário
+- Indício de ausência de persistência backend
+- Inconsistência entre estado da interface e armazenamento da aplicação
+- Comprometimento da confiabilidade do sistema
+
+---
+
+## Bug 8 — Função de arquivar não move item para lista de arquivados
+
+### Severidade
+Média
+
+### Descrição
+Ao clicar no botão "Arquivar" de um banco de dados criado, o item não é movido para a área de itens arquivados.
+
+### Passos para reproduzir
+1. Acessar "Bancos de dados"
+2. Criar novo item
+3. Clicar no botão "Arquivar"
+4. Abrir seção "Itens Arquivados"
+
+### Resultado esperado
+O item deveria:
+- desaparecer da tabela principal
+e
+- aparecer na seção "Itens Arquivados"
+
+### Resultado obtido
+O item permanece na listagem principal e não aparece na seção de arquivados.
+
+### Impacto
+A funcionalidade de arquivamento não pode ser utilizada corretamente pelos usuários.
+
+---
+
+## Observação 5 — Página Colmeia Forms sem funcionalidades implementadas
+
+### Descrição
+A página "Colmeia Forms" pode ser acessada normalmente pelo menu da campanha, porém atualmente não apresenta nenhuma funcionalidade visível ao usuário.
+
+### Comportamento observado
+- Página renderiza corretamente
+- Não existem:
+  - formulários
+  - tabelas
+  - botões de ação
+  - mensagens orientativas
+  - conteúdo funcional
+
+### Impacto
+Usuário consegue acessar a área, porém não possui nenhuma funcionalidade disponível, gerando sensação de funcionalidade incompleta ou não implementada.

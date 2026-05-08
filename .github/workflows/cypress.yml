@@ -1,0 +1,97 @@
+name: Cypress Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    # Executar testes diariamente às 9:00 AM (UTC)
+    - cron: '0 9 * * *'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        browser: [chrome, firefox, edge]
+        node-version: [18.x, 20.x]
+      fail-fast: false
+    
+    steps:
+      # 1. Checkout do código
+      - name: Checkout código
+        uses: actions/checkout@v4
+      
+      # 2. Setup Node.js
+      - name: Configurar Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      
+      # 3. Instalar dependências
+      - name: Instalar dependências
+        run: npm ci
+      
+      # 4. Executar testes com Cypress
+      - name: Executar testes Cypress (${{ matrix.browser }})
+        uses: cypress-io/github-action@v6
+        with:
+          browser: ${{ matrix.browser }}
+          spec: |
+            cypress/e2e/login.cy.js
+            cypress/e2e/dashboard.cy.js
+            cypress/e2e/bancoDeDados.cy.js
+            cypress/e2e/colmeiaForms.cy.js
+          start: npm start
+          wait-on: 'http://localhost:3000'
+          wait-on-timeout: 120
+        env:
+          CYPRESS_BASE_URL: https://teste-colmeia-qa.colmeia-corp.com
+      
+      # 5. Upload de screenshots (em caso de falha)
+      - name: Upload screenshots (falhas)
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: cypress-screenshots-${{ matrix.browser }}-${{ matrix.node-version }}
+          path: cypress/screenshots
+          retention-days: 30
+      
+      # 6. Upload de vídeos
+      - name: Upload vídeos dos testes
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cypress-videos-${{ matrix.browser }}-${{ matrix.node-version }}
+          path: cypress/videos
+          retention-days: 30
+      
+      # 7. Relatório de resultados
+      - name: Gerar relatório
+        if: always()
+        run: |
+          echo "## Resultados dos Testes" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Navegador**: ${{ matrix.browser }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Node Version**: ${{ matrix.node-version }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Testes executados com sucesso!" >> $GITHUB_STEP_SUMMARY
+
+  # Job para verificar se todos os testes passaram
+  test-status:
+    runs-on: ubuntu-latest
+    needs: test
+    if: always()
+    
+    steps:
+      - name: Verificar status dos testes
+        run: |
+          if [ "${{ needs.test.result }}" == "failure" ]; then
+            echo "❌ Alguns testes falharam"
+            exit 1
+          else
+            echo "✅ Todos os testes passaram"
+          fi
